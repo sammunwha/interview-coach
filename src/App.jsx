@@ -169,7 +169,7 @@ function PeerFeedback({ studentName, onDone }) {
                   background: (scores[item.id]||0) >= v ? Y : "#2a2a2a",
                   border:`1.5px solid ${(scores[item.id]||0) >= v ? Y : "#444"}`,
                   cursor:"pointer", color: (scores[item.id]||0) >= v ? BK : "#666",
-                  fontSize: 13, fontWeight: 800, transition:"all .15s" }}>{v}</button>
+                  fontSize: 13, fontWeight: 800 }}>{v}</button>
             ))}
           </div>
         </div>
@@ -218,25 +218,28 @@ export default function App() {
   }).filter(Boolean).join("\n");
   const canSubmit = info.every(l => (answers[l.key]||"").trim()) && question;
 
-async function getAI() {
+  async function getAI() {
     setLoading(true); setErr(""); setFeedback(null);
     try {
       const res = await fetch("/api/chat", {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model:"claude-sonnet-4-20250514",
-          max_tokens:1500,
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1500,
           system: SYSTEM_PROMPT,
-          messages:[{ role:"user", content:`이름: ${name}\n질문: ${question}\n기법: ${technique}\n\n${fullAnswer}` }]
+          messages: [{ role: "user", content: `이름: ${name}\n질문: ${question}\n기법: ${technique}\n\n${fullAnswer}` }]
         }),
       });
       const data = await res.json();
-      const raw = (data.content?.[0]?.text||"").replace(/```json|```/g,"").trim();
+      const raw = (data.content?.[0]?.text || "").replace(/```json|```/g, "").trim();
       setFeedback(JSON.parse(raw));
       setStep("ai");
-    } catch { setErr("피드백을 불러오지 못했습니다. 다시 시도해주세요."); }
-    finally { setLoading(false); }
+    } catch {
+      setErr("피드백을 불러오지 못했습니다. 다시 시도해주세요.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   const Header = ({ title, sub, back }) => (
@@ -269,7 +272,6 @@ async function getAI() {
     fontFamily:"inherit", transition:"all .2s", boxShadow: active ? `0 0 24px ${Y}33` : "none",
   });
 
-  // STEP: 이름
   if (step === "name") return (
     <div style={{ minHeight:"100vh", background:BK, fontFamily:"'Noto Sans KR', sans-serif",
       display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:24 }} ref={topRef}>
@@ -295,7 +297,6 @@ async function getAI() {
     </div>
   );
 
-  // STEP: 가이드
   if (step === "guide") return (
     <div style={{ minHeight:"100vh", background:BK, fontFamily:"'Noto Sans KR', sans-serif", paddingBottom:60 }} ref={topRef}>
       <Header title="면접 기법 가이드" sub="시작 전 꼭 읽어보세요" />
@@ -333,7 +334,6 @@ async function getAI() {
     </div>
   );
 
-  // STEP: 기법 선택
   if (step === "select") return (
     <div style={{ minHeight:"100vh", background:BK, fontFamily:"'Noto Sans KR', sans-serif", paddingBottom:60 }} ref={topRef}>
       <Header title="기법 선택" sub="오늘 연습할 기법을 고르세요" back={() => setStep("guide")} />
@@ -346,7 +346,7 @@ async function getAI() {
                 cursor:"pointer", textAlign:"left", fontFamily:"inherit" }}>
               <div style={{ fontSize:36, fontWeight:900, color:Y, marginBottom:8 }}>{t}</div>
               <div style={{ fontSize:12, fontWeight:800, color:"#bbb", marginBottom:4 }}>{t==="PREP"?"의견·가치관 질문":"경험·사례 질문"}</div>
-              <div style={{ fontSize:11, color:"#555", lineHeight:1.8 }}>{t==="PREP"?"Point → Reason\n→ Example → Point":"Situation → Task\n→ Action → Result"}</div>
+              <div style={{ fontSize:11, color:"#555", lineHeight:1.8 }}>{t==="PREP"?"Point → Reason → Example → Point":"Situation → Task → Action → Result"}</div>
             </button>
           ))}
         </div>
@@ -355,7 +355,6 @@ async function getAI() {
     </div>
   );
 
-  // STEP: 질문 선택
   if (step === "question") {
     const cats = Object.keys(QBANK[technique]);
     return (
@@ -387,7 +386,6 @@ async function getAI() {
     );
   }
 
-  // STEP: 답변 작성
   if (step === "answer") return (
     <div style={{ minHeight:"100vh", background:BK, fontFamily:"'Noto Sans KR', sans-serif", paddingBottom:60 }} ref={topRef}>
       <Header title="답변 작성" sub={`${technique} 기법`} back={() => setStep("question")} />
@@ -401,25 +399,23 @@ async function getAI() {
         {info.map(l => (
           <div key={l.key} style={{ marginBottom:14 }}>
             <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
-              <span style={{ background:l.color, color:BK, fontSize:11, fontWeight:900,
-                padding:"3px 10px", borderRadius:99 }}>{l.label}</span>
+              <span style={{ background:l.color, color:BK, fontSize:11, fontWeight:900, padding:"3px 10px", borderRadius:99 }}>{l.label}</span>
               <span style={{ fontSize:12, color:MG }}>{l.desc}</span>
             </div>
             <div style={{ fontSize:11, color:"#555", marginBottom:6, fontStyle:"italic", paddingLeft:2 }}>예) {l.ex}</div>
             <textarea value={answers[l.key]||""} onChange={e => setAnswers(p => ({...p,[l.key]:e.target.value}))}
-              placeholder={`${l.desc}...`} rows={3} style={{ ...inp, borderColor: answers[l.key]?l.color+"88":"#3a3a3a" }} />
+              placeholder={`${l.desc}...`} rows={3}
+              style={{ ...inp, borderColor: answers[l.key]?l.color+"88":"#3a3a3a" }} />
           </div>
         ))}
         {err && <div style={{ color:"#ff6b6b", fontSize:13, marginBottom:10 }}>{err}</div>}
         <button onClick={getAI} disabled={!canSubmit||loading} style={btn(canSubmit&&!loading, true)}>
           {loading ? "🤖 AI가 분석 중..." : "🤖 AI 피드백 받기"}
         </button>
-        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
       </div>
     </div>
   );
 
-  // STEP: AI 피드백
   if (step === "ai" && feedback) {
     const avg = Math.round(Object.values(feedback.scores).reduce((a,b)=>a+b,0)/4);
     const grade = avg>=9?["S","#FFD700"]:avg>=7?["A","#4CAF50"]:avg>=5?["B",Y]:["C","#FF7043"];
