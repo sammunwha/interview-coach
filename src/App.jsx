@@ -222,7 +222,8 @@ export default function App() {
     setLoading(true); setErr(""); setFeedback(null);
     try {
       const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method:"POST", headers:{ "Content-Type":"application/json" },
+        method:"POST", headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
+        const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
         body: JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:1500,
           system: SYSTEM_PROMPT,
           messages:[{ role:"user", content:`이름: ${name}\n질문: ${question}\n기법: ${technique}\n\n${fullAnswer}` }] }),
