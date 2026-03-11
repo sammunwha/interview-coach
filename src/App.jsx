@@ -218,19 +218,18 @@ export default function App() {
   }).filter(Boolean).join("\n");
   const canSubmit = info.every(l => (answers[l.key]||"").trim()) && question;
 
-  async function getAI() {
+async function getAI() {
     setLoading(true); setErr(""); setFeedback(null);
     try {
-const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
-const res = await fetch("/api/chat", {
-  method:"POST", 
-  headers:{ "Content-Type":"application/json" }
-    "x-api-key": apiKey,
-    "anthropic-version": "2023-06-01"
-  },
-        body: JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:1500,
+      const res = await fetch("/api/chat", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({
+          model:"claude-sonnet-4-20250514",
+          max_tokens:1500,
           system: SYSTEM_PROMPT,
-          messages:[{ role:"user", content:`이름: ${name}\n질문: ${question}\n기법: ${technique}\n\n${fullAnswer}` }] }),
+          messages:[{ role:"user", content:`이름: ${name}\n질문: ${question}\n기법: ${technique}\n\n${fullAnswer}` }]
+        }),
       });
       const data = await res.json();
       const raw = (data.content?.[0]?.text||"").replace(/```json|```/g,"").trim();
