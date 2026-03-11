@@ -277,7 +277,7 @@ export default function App() {
       display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:24 }} ref={topRef}>
       <div style={{ width:"100%", maxWidth:400 }}>
         <div style={{ textAlign:"center", marginBottom:40 }}>
-          <div style={{ fontSize:13, fontWeight:800, color:MG, letterSpacing:2, marginBottom:8 }}>㈜드림하이</div>
+          <div style={{ fontSize:13, fontWeight:800, color:MG, letterSpacing:2, marginBottom:8 }}>교육콘텐츠 전문기업 ㈜삼양문화</div>
           <div style={{ fontSize:36, fontWeight:900, color:Y, lineHeight:1.1, marginBottom:6 }}>AI 수시면접</div>
           <div style={{ fontSize:36, fontWeight:900, color:"#fff", lineHeight:1.1, marginBottom:12 }}>코치</div>
           <div style={{ fontSize:13, color:MG }}>PREP · STAR 기법으로 합격 답변 완성</div>
