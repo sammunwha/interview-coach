@@ -289,9 +289,14 @@ export default function App() {
             onKeyDown={e => e.key==="Enter" && name.trim() && setStep("guide")}
             placeholder="예: 김민준" autoFocus
             style={{ ...inp, fontSize:18, padding:"14px 16px", marginBottom:16, border:`1.5px solid ${name ? Y+"66" : "#3a3a3a"}` }} />
-          <button onClick={() => name.trim() && setStep("guide")} disabled={!name.trim()} style={btn(!!name.trim(), true)}>
-            시작하기 →
-          </button>
+<button onClick={() => name.trim() && setStep("guide")} disabled={!name.trim()}
+  style={{ width:"100%", background: name.trim() ? Y : "#333", border: name.trim() ? "none" : `1.5px solid ${Y}`,
+    borderRadius:12, padding:"18px", fontSize:16, fontWeight:900,
+    cursor: name.trim() ? "pointer" : "not-allowed",
+    color: name.trim() ? BK : Y,
+    fontFamily:"inherit", transition:"all .3s" }}>
+  시작하기 →
+</button>
         </div>
       </div>
     </div>
