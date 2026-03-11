@@ -218,9 +218,10 @@ export default function App() {
   }).filter(Boolean).join("\n");
   const canSubmit = info.every(l => (answers[l.key]||"").trim()) && question;
 
-  async function getAI() {
+async function getAI() {
     setLoading(true); setErr(""); setFeedback(null);
     try {
+      const avg = 0;
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -228,12 +229,16 @@ export default function App() {
           model: "claude-sonnet-4-20250514",
           max_tokens: 1500,
           system: SYSTEM_PROMPT,
-          messages: [{ role: "user", content: `이름: ${name}\n질문: ${question}\n기법: ${technique}\n\n${fullAnswer}` }]
+          messages: [{ role: "user", content: `이름: ${name}\n질문: ${question}\n기법: ${technique}\n\n${fullAnswer}` }],
+          meta: { name, technique, question, fullAnswer }
         }),
       });
       const data = await res.json();
       const raw = (data.content?.[0]?.text || "").replace(/```json|```/g, "").trim();
-      setFeedback(JSON.parse(raw));
+      const parsed = JSON.parse(raw);
+      const avgScore = Math.round(Object.values(parsed.scores).reduce((a,b)=>a+b,0)/4);
+      const gradeStr = avgScore>=9?"S":avgScore>=7?"A":avgScore>=5?"B":"C";
+      setFeedback(parsed);
       setStep("ai");
     } catch {
       setErr("피드백을 불러오지 못했습니다. 다시 시도해주세요.");
